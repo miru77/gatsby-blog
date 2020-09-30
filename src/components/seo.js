@@ -9,8 +9,9 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Helmet } from "react-helmet"
 import { useStaticQuery, graphql } from "gatsby"
+import imageDefault from "../images/image-default.jpg"
 
-function SEO({ description, lang, meta, title }) {
+function SEO({ description, lang, meta, title, image }) {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -59,6 +60,10 @@ function SEO({ description, lang, meta, title }) {
         {
           name: `twitter:creator`,
           content: site.siteMetadata?.author || ``,
+        },
+        {
+          property: `og:image`,
+          content: image || imageDefault,
         },
         {
           name: `twitter:title`,

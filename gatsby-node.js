@@ -5,3 +5,47 @@
  */
 
 // You can delete this file if you're not using it
+
+const path = require("path")
+const { paginate } = require("gatsby-awesome-pagination")
+
+exports.createPages = async ({ actions, graphql }) => {
+  const { createPage } = actions
+
+  const posts = await graphql(`
+    query {
+      allStrapiPost(sort: { fields: createdAt, order: DESC }) {
+        nodes {
+          id
+          title
+          url
+          content
+          createdAt
+          miniature {
+            publicURL
+          }
+          seo_title
+          seo_description
+        }
+      }
+    }
+  `)
+  //console.log(posts.data.allStrapiPost.nodes)
+  paginate({
+    createPage,
+    items: posts.data.allStrapiPost.nodes,
+    itemsPerPage: 5,
+    pathPrefix: "/",
+    component: path.resolve(`src/templates/blog.js`),
+  })
+
+  posts.data.allStrapiPost.nodes.forEach(post => {
+    createPage({
+      path: `/${post.url}`,
+      component: path.resolve(`src/templates/post/post.js`),
+      context: {
+        data: post,
+      },
+    })
+  })
+}
